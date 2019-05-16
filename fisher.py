@@ -4,12 +4,9 @@
 @Software : PyCharm
 @File     : fisher.py 
 """
-from flask import Flask
+from app import create_app
 
-app = Flask(__name__)
-app.config.from_object('config')
-
-import app.web.book
+app = create_app()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=app.config['DEBUG'], port=81)

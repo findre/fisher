@@ -5,19 +5,27 @@
 @File     : book.py 
 """
 from flask import jsonify
+from flask import request
 
-from helper import is_isbn_or_key
-from yushu_book import YuShuBook
-from fisher import app
+from app.forms.book import SearchForm
+
+from . import web
+from app.libs.helper import is_isbn_or_key
+from app.spider.yushu_book import YuShuBook
 
 
-@app.route("/book/search/<q>/<page>")
-def search(q, page):
-    isbn_or_key = is_isbn_or_key(q)
+@web.route("/book/search")
+def search():
+    form = SearchForm(request.args)
 
-    if isbn_or_key == 'isbn':
-        result = YuShuBook.search_by_isbn(q)
+    if form.validate():
+        q = form.q.data.strip()
+        page = form.page.data
+        isbn_or_key = is_isbn_or_key(q)
+        if isbn_or_key == 'isbn':
+            result = YuShuBook.search_by_isbn(q)
+        else:
+            result = YuShuBook.search_by_keyword(q, page)
+        return jsonify(result)
     else:
-        result = YuShuBook.search_by_keyword(q)
-
-    return jsonify(result)
+        return jsonify(form.errors)

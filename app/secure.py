@@ -4,4 +4,4 @@
 @Software : PyCharm
 @File     : config.py 
 """
-DEBUG = False
+DEBUG = True
